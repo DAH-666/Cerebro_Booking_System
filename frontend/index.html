@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerebro - Sistema de Reservas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- FONDO 3D -->
+    <div class="synthwave-bg">
+        <div class="synthwave-horizon"></div>
+        <div class="synthwave-mask">
+            <div class="synthwave-3d-wrapper">
+                <div class="synthwave-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DEVICE -->
+    <div class="w-full max-w-[500px] te-device p-5 pt-8 pb-8 relative">
+        <div class="screw s-tl"></div><div class="screw s-tr"></div>
+        <div class="screw s-bl"></div><div class="screw s-br"></div>
+
+        <div class="flex justify-between items-start px-2 mb-4 relative z-10">
+            <div class="speaker-grill">
+                <div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div>
+                <div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div>
+                <div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div>
+            </div>
+            <div class="text-right">
+                <h2 class="font-black text-xl tracking-tighter leading-none">CEREBRO<span class="text-[--te-orange]">.</span></h2>
+                <p class="font-mono-te text-[8px] font-bold tracking-widest uppercase">SYS.BOOKING v3.0</p>
+            </div>
+        </div>
+
+        <!-- PANTALLA OLED -->
+        <div class="te-screen p-4 mb-6">
+            <div class="flex justify-between items-center border-b border-[--te-orange] pb-2 mb-2 opacity-80">
+                <div class="font-mono-te text-[10px] tracking-widest" id="currentDate">--.--.--</div>
+                <div class="font-mono-te text-[10px] tracking-widest uppercase" id="screenStatus">WAITING_AUTH</div>
+                <div class="font-mono-te text-[10px] tracking-widest" id="clock">00:00</div>
+            </div>
+            
+            <div class="flex items-center gap-4 py-2">
+                <div class="font-mono-te">
+                    <p class="text-sm font-bold screen-text-glow" id="screenTitle">MAPA_STUDIOS</p>
+                    <p class="text-[10px] opacity-80 mt-1" id="screenUser">> PLEASE LOGIN</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 1: LOGIN -->
+        <div id="loginSection" class="px-2 space-y-6">
+            <div class="flex flex-col items-center border-t-2 border-dashed border-slate-300 pt-6">
+                <div id="loginError" class="te-console error w-full mb-4 hidden"></div>
+                <button id="googleLoginBtn" class="w-full te-btn">
+                    <i class="fa-brands fa-google"></i> OAUTH_SYNC
+                </button>
+                <div class="flex items-center gap-3 mt-6">
+                    <div class="led-indicator" id="powerLed"></div>
+                    <span class="font-mono-te text-[9px] font-bold text-slate-500">PWR_STATUS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: FORMULARIO -->
+        <form id="bookingForm" class="px-1 space-y-5 hidden">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="te-input-group mt-2">
+                    <label class="te-label">ARTISTA</label>
+                    <input type="text" id="artistName" required class="te-input" placeholder="Ej: The Weeknd">
+                </div>
+                <div class="te-input-group mt-2">
+                    <label class="te-label">CLIENTE</label>
+                    <select id="companySelect" required class="te-input font-bold" style="padding-right: 25px;">
+                        <option value="" disabled selected>SEL...</option>
+                    </select>
+                    <i class="fa-solid fa-sort absolute right-2 top-1/2 transform -translate-y-1/2 text-xs pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="te-input-group mt-2">
+                <label class="te-label">ESPACIO</label>
+                <select id="studioSelect" required class="te-input font-bold">
+                    <option value="" disabled selected>Seleccionar control...</option>
+                    <option value="Control 1">Control 1</option>
+                    <option value="Control 2 + Sala B">Control 2 + Sala B</option>
+                    <option value="Control 3">Control 3</option>
+                    <option value="Control 5">Control 5</option>
+                    <option value="Control 6">Control 6</option>
+                    <option value="Suite de producción">Suite de producción</option>
+                </select>
+                <i class="fa-solid fa-sort absolute right-3 top-1/2 transform -translate-y-1/2 text-xs pointer-events-none"></i>
+            </div>
+
+            <div id="extraRoomContainer" class="te-input-group mt-2 hidden bg-gray-100">
+                <label class="te-label">EXTRAS (SALA GRABACIÓN)</label>
+                <select id="extraRoomSelect" class="te-input font-bold">
+                    <option value="" disabled selected>Especifica configuración...</option>
+                    <option value="Control sin sala de grabacion.">Solo Control (Sin sala)</option>
+                    <option value="Control + Suite de producción">Control + Uso de Suite</option>
+                </select>
+                <i class="fa-solid fa-sort absolute right-3 top-1/2 transform -translate-y-1/2 text-xs pointer-events-none"></i>
+            </div>
+
+            <div class="border border-dashed border-slate-400 p-3 relative rounded">
+                <span class="absolute -top-2 left-3 bg-[--te-case] px-2 text-[10px] font-bold text-slate-500">FECHA</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-3 mb-1">
+                        <input type="date" id="bookingDate" required class="te-input w-full bg-white border border-black rounded-sm h-10">
+                    </div>
+                    <div class="col-span-1 relative">
+                        <span class="absolute -top-3 left-1 text-[8px] font-bold">IN</span>
+                        <input type="time" id="timeStart" required class="te-input w-full bg-white border border-black text-center h-10 rounded-sm">
+                    </div>
+                    <div class="flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-arrows-left-right text-slate-400"></i>
+                    </div>
+                    <div class="col-span-1 relative">
+                        <span class="absolute -top-3 left-1 text-[8px] font-bold">OUT</span>
+                        <input type="time" id="timeEnd" required class="te-input w-full bg-white border border-black text-center h-10 rounded-sm">
+                    </div>
+                </div>
+            </div>
+
+            <div id="extendedHoursAlert" class="hidden font-mono-te text-[10px] font-bold text-[#FF5000] border border-[#FF5000] p-2 rounded">
+                <i class="fa-solid fa-triangle-exclamation"></i> [SYS.WARN] REQUERIRÁ APROBACIÓN POR HORARIO.
+            </div>
+
+            <div id="teConsole" class="te-console hidden"></div>
+
+            <div class="pt-2 flex gap-2">
+                <button type="button" id="logoutBtn" class="te-btn te-btn-grey !px-4" title="Cerrar Sesión">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
+                <button type="submit" id="submitBtn" class="te-btn te-btn-orange flex-1">
+                    <i class="fa-solid fa-bolt" id="btnIcon"></i>
+                    <span id="btnText">ENVIAR</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="absolute bottom-4 right-6 font-mono-te text-[8px] font-bold text-slate-400">
+            PWR: 9V DC // DESIGNED BY DANIEL ALANÍS
+        </div>
+    </div>
+
+    <!-- Reloj de la Pantalla OLED -->
+    <script>
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'2-digit'}).replace(/\//g, '.');
+        setInterval(() => {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        }, 1000);
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

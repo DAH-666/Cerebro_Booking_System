@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerebro - Aprobar Reserva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="synthwave-bg">
+        <div class="synthwave-horizon"></div>
+        <div class="synthwave-mask"><div class="synthwave-3d-wrapper"><div class="synthwave-grid"></div></div></div>
+    </div>
+
+    <div class="w-full max-w-[500px] te-device p-5 pt-8 pb-8 relative">
+        <div class="screw s-tl"></div><div class="screw s-tr"></div>
+        <div class="screw s-bl"></div><div class="screw s-br"></div>
+
+        <div class="flex justify-between items-start px-2 mb-4 relative z-10">
+            <div class="speaker-grill">
+                <div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div>
+                <div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div><div class="grill-hole"></div>
+            </div>
+            <div class="text-right">
+                <h2 class="font-black text-xl tracking-tighter leading-none">CEREBRO<span class="text-[--te-orange]">.</span></h2>
+                <p class="font-mono-te text-[8px] font-bold tracking-widest uppercase">SYS.APPROVAL v3.0</p>
+            </div>
+        </div>
+
+        <div class="te-screen p-4 mb-6">
+            <div class="flex justify-between items-center border-b border-[--te-orange] pb-2 mb-2 opacity-80">
+                <div class="font-mono-te text-[10px] tracking-widest" id="currentDate">--.--.--</div>
+                <div class="font-mono-te text-[10px] tracking-widest uppercase" id="screenStatus">CONNECTING...</div>
+                <div class="font-mono-te text-[10px] tracking-widest" id="clock">00:00</div>
+            </div>
+            <div class="flex items-center gap-4 py-2">
+                <div class="font-mono-te">
+                    <p class="text-sm font-bold screen-text-glow" id="screenTitle">MAPA_STUDIOS</p>
+                    <p class="text-[10px] opacity-80 mt-1" id="screenUser">> EXTRACTING DATA</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingSection" class="px-2 text-center py-6">
+            <div class="led-indicator led-warn inline-block animate-pulse mb-2"></div>
+            <p class="font-mono-te text-xs font-bold uppercase tracking-widest">Accesing Database...</p>
+        </div>
+
+        <form id="approvalForm" class="px-1 space-y-5 hidden">
+            <input type="hidden" id="pmEmail" name="pmEmail">
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="te-input-group mt-2">
+                    <label class="te-label">ARTISTA</label>
+                    <input type="text" id="artistName" required class="te-input font-mono-te" readonly>
+                </div>
+                <div class="te-input-group mt-2">
+                    <label class="te-label">CLIENTE</label>
+                    <input type="text" id="companySelect" required class="te-input font-mono-te" readonly>
+                </div>
+            </div>
+
+            <div class="te-input-group mt-2">
+                <label class="te-label">ESPACIO</label>
+                <select id="studioSelect" required class="te-input font-bold" disabled>
+                    <option value="Control 1">Control 1</option>
+                    <option value="Control 2 + Sala B">Control 2 + Sala B</option>
+                    <option value="Control 3">Control 3</option>
+                    <option value="Control 5">Control 5</option>
+                    <option value="Control 6">Control 6</option>
+                    <option value="Suite de producción">Suite de producción</option>
+                </select>
+            </div>
+
+            <div class="border border-dashed border-slate-400 p-3 relative rounded opacity-80 bg-gray-100">
+                <span class="absolute -top-2 left-3 bg-[--te-case] px-2 text-[10px] font-bold text-slate-500">FECHA SOLICITADA</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-3 mb-1">
+                        <input type="date" id="bookingDate" required class="te-input w-full bg-transparent h-10" readonly>
+                    </div>
+                    <div class="col-span-1 relative">
+                        <span class="absolute -top-3 left-1 text-[8px] font-bold">IN</span>
+                        <input type="time" id="timeStart" required class="te-input w-full bg-transparent text-center h-10" readonly>
+                    </div>
+                    <div class="flex items-center justify-center font-bold text-slate-400"><i class="fa-solid fa-arrows-left-right"></i></div>
+                    <div class="col-span-1 relative">
+                        <span class="absolute -top-3 left-1 text-[8px] font-bold">OUT</span>
+                        <input type="time" id="timeEnd" required class="te-input w-full bg-transparent text-center h-10" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div id="teConsole" class="te-console hidden"></div>
+
+            <div class="pt-2 flex gap-3" id="actionButtons">
+                <button type="button" id="rejectBtn" class="w-1/3 te-btn te-btn-red">
+                    <i class="fa-solid fa-xmark"></i> DENEGAR
+                </button>
+                <button type="button" id="approveBtn" class="w-2/3 te-btn te-btn-green">
+                    <i class="fa-solid fa-check"></i> AUTORIZAR
+                </button>
+            </div>
+        </form>
+
+        <div class="absolute bottom-4 right-6 font-mono-te text-[8px] font-bold text-slate-400">
+            PWR: 9V DC // DESIGNED BY DANIEL ALANÍS
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'2-digit'}).replace(/\//g, '.');
+        setInterval(() => document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit', second:'2-digit'}), 1000);
+    </script>
+    <script src="approval.js"></script>
+</body>
+</html>
