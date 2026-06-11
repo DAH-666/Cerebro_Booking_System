@@ -1,133 +1,102 @@
+Markdown
 # 🎛️ CEREBRO — SYS.BOOKING v3.0
 
-**Serverless Enterprise-Grade Web Application for High-Performance Recording Studio Management**
+**Serverless Web App para la Gestión de Estudios de Grabación de Alto Rendimiento**
 
 ![Demo Principal de Cerebro](assets/demo-main.gif)
-*Interfaz principal de Cerebro en funcionamiento.*
 
-## 📝 Resumen Ejecutivo
+## 📝 Sobre el Proyecto
 
-Cerebro (SYS.BOOKING v3.0) es una solución de software web B2B de arquitectura serverless y alto rendimiento, diseñada para centralizar y automatizar el flujo de trabajo de reservas de salas y controles de grabación en entornos de producción musical complejos.
+Cerebro es una aplicación web B2B diseñada para centralizar las reservas de salas en entornos de producción musical complejos. 
 
-El sistema elimina por completo la necesidad de servidores dedicados y bases de datos relacionales costosas de mantener, aprovechando la infraestructura de Google Workspace como un Backend-as-a-Service (BaaS). A través de un puente asíncrono optimizado con Google Apps Script (GAS), Cerebro ofrece sincronización bidireccional en tiempo real, validación algorítmica de conflictos de calendario, reglas de negocio dinámicas por sello discográfico y un sistema automatizado de aprobaciones fuera de jornada con alertas directas mediante integraciones coordinadas de correo electrónico y mensajería instantánea (WhatsApp).
+El objetivo principal de este proyecto era eliminar la necesidad de mantener servidores dedicados o bases de datos tradicionales. Para lograrlo, utiliza la infraestructura de Google Workspace como un Backend-as-a-Service (BaaS). Mediante Google Apps Script (GAS), el sistema sincroniza datos bidireccionalmente, evita cruces de horarios y gestiona aprobaciones fuera de jornada con alertas directas por WhatsApp y correo electrónico.
 
-## 🧠 Características Principales (Key Features)
+## 🛠️ Stack Tecnológico
 
-### 🔐 1. Control de Acceso y Gestión de Identidad (OAuth 2.0)
+**Frontend (SPA):**
+* HTML5 & CSS Custom Properties
+* Tailwind CSS & FontAwesome
+* Vanilla JavaScript (ES6+, Fetch API)
+* Google Identity Services SDK
 
-* **Google Identity Services (GSI) Integration:** Autenticación federada utilizando el estándar de la industria OAuth 2.0.
-* **Filtro Dinámico de Dominios:** Restricción de acceso en tiempo real a nivel de frontend y backend para correos electrónicos que pertenezcan exclusivamente a dominios corporativos preaprobados.
-* **Permisos Granulares por Token:** Solicitud explícita del scope `calendar.readonly` para que los gestores de proyectos (PMs) puedan leer el estado del calendario corporativo desde el navegador.
+**Serverless Backend:**
+* Google Apps Script (API Web App / Enrutador doPost y doGet)
+* Google Calendar API (Base de datos principal)
+* GmailApp API (Notificaciones)
+* CallMeBot API (Gateway para push notifications en WhatsApp)
 
-### ⚡ 2. Motor de Resolución de Conflictos en Tiempo Real
+## 🧠 Core Features
 
-* **Estrategia de Optimización de Consultas:** El frontend realiza peticiones directas y optimizadas a la API de Calendar limitando la búsqueda mediante parámetros de tiempo estrictos (`timeMin` y `timeMax`).
-* **Prevención de Doble Reserva:** En caso de solapamiento de horario en el espacio solicitado, el sistema bloquea la transacción de inmediato, notificando visualmente al operador en la consola del sistema.
+### 1. Autenticación y Control de Acceso
+Integra OAuth 2.0 (Google Identity Services) con un filtro de dominios en tiempo real. Solo los usuarios con correos pertenecientes a sellos o empresas preaprobadas en el backend pueden renderizar la interfaz y solicitar reservas.
 
-### 💬 3. Notificaciones Instantáneas y Alertas vía WhatsApp (CallMeBot API)
+### 2. Motor Anti-Solapamientos
+Para evitar las dobles reservas, el frontend consulta la API de Calendar limitando la búsqueda a las horas solicitadas (`timeMin` y `timeMax`). Si detecta un conflicto, la transacción se bloquea en milisegundos antes de enviar nada al servidor.
 
-* **Notificación de Excepciones en Tiempo Real:** El backend no depende únicamente de la bandeja de entrada de correo; ante una solicitud de horario especial o fuera de jornada, el sistema dispara un webhook asíncrono.
-* **Pasarela CallMeBot:** Integra un cliente HTTP en Google Apps Script que emite una petición HTTPS estructurada hacia el API Gateway de CallMeBot, entregando un mensaje en formato Markdown directamente al dispositivo móvil del Studio Manager.
-* **Enlaces de Acción Inmediata:** El mensaje push de WhatsApp encapsula los metadatos de la sesión (Artista, Sala, Horario solicitado) y el enlace directo cifrado con el token UUID para que el administrador pueda auditar y resolver la solicitud en un solo clic.
+### 3. Lógica de Cuotas por Discográfica
+El sistema cuenta con un controlador de concurrencia. Evalúa cuántos estudios tiene reservados un mismo sello en un día específico y aplica límites de uso dependiendo de los acuerdos comerciales configurados.
 
-![Notificaciones ChatBot](assets/cerebro-chatbot.jpg)
+### 4. Alertas Asíncronas (WhatsApp & Email)
+Las reservas dentro del horario estándar (L-V, 10h-22h) se procesan automáticamente. Si un proyecto requiere trabajar de madrugada o en fin de semana, el sistema dispara un webhook. A través de la API de CallMeBot, el Studio Manager recibe un mensaje de WhatsApp con los datos de la sesión y un enlace único (UUID) para aprobar o denegar la solicitud desde el móvil.
 
-*Notificaciones Whatsapp con ChatBot*
+### 5. Interfaz "Teenage Engineering"
+El frontend huye del diseño corporativo clásico. Utiliza una UI brutalista inspirada en el hardware de sintetizadores (botones mecánicos, etiquetas de esquemas eléctricos) optimizada por hardware mediante transformaciones CSS3 para mantener 60 FPS fluidos.
 
-### 📊 4. Motor de Cuotas Dinámicas por Sello (Business Logic)
-
-* **Control de Concurrencia Diario:** Lógica de negocio avanzada parametrizada para auditar cuántos estudios distintos tiene reservados de forma concurrente una misma discográfica en un mismo día.
-* **Límites de Uso Asimétricos:** Configuración asimétrica de cuotas rígidas dependiendo de la empresa de management o sello discográfico asociado.
-
-### 🎚️ 5. UI/UX Skeuomórfica de Alto Rendimiento
-
-* **Diseño Brutalista Industrial:** Interfaz inspirada en el hardware de diseño musical de *Teenage Engineering* (botones Chunky, etiquetas de esquema electrónico de precisión y un chasis metálico virtual con tornillería).
-* **Aceleración por GPU:** Fondo de rejilla 3D Synthwave/Outrun fluida y optimizada mediante transformaciones CSS3 tridimensionales (`transform: translateY`), forzando el renderizado a 60 FPS.
-
-## 🔄 Arquitectura y Flujo de Usuario (User Flow)
+## 🔄 Flujo de Usuario
 
 ```text
-[ Usuario ] ──► [ OAuth 2.0 ] ──► [ Filtro Dominio ] ──► [ Render de Formulario ]
-                                                                 │
-[ Solicitud Normal ] ◄── [ Validador de Reglas de Negocio (GAS) ] ◄─┘
+[ Usuario ] ──► [ Auth OAuth 2.0 ] ──► [ Filtro de Dominio ] ──► [ Formulario ]
+                                                                      │
+[ Aprobación Automática ] ◄── [ Validador Lógico (GAS) ] ◄────────────┘
          │
-         ├─── (Consistencia de Horario L-V: 10h-22h) ──► [ Reserva Directa ]
+         ├─── (Horario Estándar) ───────► [ Reserva Confirmada en Calendar ]
          │
-         └─── (Horas Extra / Fines de Semana) ─────────► [ Transición a Excepción ]
-                                                                 │
-                                                   [ ScriptProperties (UUID) ]
-                                                                 │
-                                                    ┌────────────┴────────────┐
-                                                    ▼                         ▼
-                                            [ Alerta Email ]         [ Alerta WhatsApp ]
-                                                    │                   (CallMeBot API)
-                                                    └────────────┬────────────┘
-                                                                 ▼
-                                                       [ approval.html ]
-                                                                 │
-                                                       (Aprobar / Denegar)
-                                                                 │
-                                                    [ Escritura / Refracción ]
-🛠️ Stack Tecnológico
-FRONTEND CLIENT (SPA)
+         └─── (Horarios Especiales) ────► [ Generación de UUID ]
+                                                  │
+                                   ┌──────────────┴──────────────┐
+                                   ▼                             ▼
+                            [ Alerta Email ]            [ Alerta WhatsApp ]
+                                   │                             │
+                                   └──────────────┬──────────────┘
+                                                  ▼
+                                      [ Panel de Aprobación ]
+                                                  │
+                                         (Aprobar / Denegar)
+                                                  │
+                                     [ Actualización en Calendar ]
+📦 Despliegue Local (Setup)
+1. Configuración del Backend (Google Apps Script)
 
-HTML5 + CSS Custom Properties (Teenage Engineering UI)
+Crea un proyecto en GAS y pega el código de backend_script.js.
 
-Tailwind CSS (Utility-First Layouts) & FontAwesome Icons
-
-Vanilla JavaScript (ES6+ Asynchronous Fetch & Event Listeners)
-
-Google Identity Services SDK
-
-SERVERLESS BACKEND ENGINE
-
-Google Apps Script (GAS) como API Web App (doPost / doGet Router).
-
-Google Calendar API (Base de datos principal temporal).
-
-GmailApp API (Sistema de notificaciones por correo electrónico).
-
-CallMeBot API Gateway: Pasarela externa encargada de transformar las solicitudes HTTPS del middleware en mensajes push nativos dentro de WhatsApp.
-
-📦 Instrucciones de Despliegue (Setup)
-Nota: Asegúrese de modificar los valores ficticios por los IDs reales de su organización.
-
-Paso 1: Configurar el Script en Google Apps Script
-Crea un nuevo proyecto en GAS, asigna el nombre Cerebro_Backend y pega el contenido de backend_script.js (renombrado a .gs).
-
-Configura las variables globales obligatorias de la infraestructura de Google:
+Modifica las variables globales con tus datos:
 
 JavaScript
-var PORTAL_URL = '[https://tudominio.com/index.html](https://tudominio.com/index.html)'; // Dirección final de producción
-var CALENDAR_ID = 'tu_calendario_booking@tuempresa.com'; // ID de Google Calendar
-var MAIN_STUDIO_EMAIL = 'admin@tuempresa.com'; // Correo de administración
-Paso 2: Configuración del Bot de WhatsApp (CallMeBot Integration)
-Para activar las alertas automatizadas en el teléfono del administrador:
+var PORTAL_URL = '[https://tudominio.com/index.html](https://tudominio.com/index.html)';
+var CALENDAR_ID = 'tu_calendario@tuempresa.com';
+var MAIN_STUDIO_EMAIL = 'admin@tuempresa.com';
+2. Integración de WhatsApp (CallMeBot)
 
-Agrega el número de teléfono oficial del bot de CallMeBot a tus contactos de WhatsApp (puedes solicitar el número actualizado en callmebot.com).
+Añade el número de CallMeBot a tus contactos y envía el mensaje: I allow callmebot to send me messages.
 
-Envía un mensaje de texto por WhatsApp al bot con la siguiente cadena exacta: I allow callmebot to send me messages.
-
-El bot validará tu sesión y te responderá automáticamente con tu API Key personalizada.
-
-En tu archivo de backend backend_script.gs, localiza y rellena las variables de configuración de WhatsApp con tu número (incluyendo el prefijo internacional del país, ej. 34 para España) y la clave recibida:
+Recibirás una API Key. Añádela a tu script:
 
 JavaScript
-var WHATSAPP_PHONE = '34XXXXXXXXX'; // Tu número de teléfono destino
-var WHATSAPP_APIKEY = 'XXXXXX';      // La API Key asignada por el bot
-El motor de GAS procesará de forma interna una llamada UrlFetchApp.fetch() utilizando codificación URI (encodeURIComponent) para formatear los saltos de línea y las negritas antes de enviarlo a la pasarela.
+var WHATSAPP_PHONE = '34XXXXXXXXX';
+var WHATSAPP_APIKEY = 'XXXXXX';
+3. Autenticación de Google Cloud
 
-Paso 3: Crear el Consentimiento en Google Cloud
-Crea un proyecto en GCP, configura la pantalla de consentimiento OAuth 2.0 en modo interno (o externo para pruebas).
+En GCP, crea una credencial OAuth 2.0 (Client ID para aplicación web).
 
-Genera un Client ID para aplicaciones web y añade el dominio de tu servidor en "Orígenes de JavaScript autorizados".
+Añade la URL de tu hosting en los Orígenes Autorizados.
 
-Paso 4: Publicar la API e Interconectar Frontend
-Implementa el script en GAS como "Aplicación Web", ejecutable como "Mi cuenta" y con acceso configurado para "Cualquier persona" (para saltar restricciones CORS). Copia la URL generada terminada en /exec.
+4. Conexión y Publicación
 
-Abre tu entorno local e instala tu GOOGLE_CLIENT_ID y tu GAS_WEBAPP_URL en los archivos script.js, modificar.js y approval.js.
+Publica el script de GAS como Aplicación Web (acceso para "Cualquier persona").
 
-Sube la carpeta estática sanitizada a tu proveedor de hosting (GitHub Pages, Vercel o Hostinger).
+Copia la URL terminada en /exec y tu GOOGLE_CLIENT_ID en los archivos script.js, modificar.js y approval.js del frontend.
+
+Despliega la carpeta en tu proveedor de hosting estático favorito (Vercel, GitHub Pages, etc.).
 
 🔒 Licencia
-Este proyecto es software privado y está distribuido bajo la licencia MIT de código abierto para fines demostrativos y de portfolio.
+Distribuido bajo la licencia MIT de código abierto para fines de portfolio.
