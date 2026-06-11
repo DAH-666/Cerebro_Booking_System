@@ -31,6 +31,7 @@ El sistema elimina por completo la necesidad de servidores dedicados y bases de 
 * **Enlaces de Acción Inmediata:** El mensaje push de WhatsApp encapsula los metadatos de la sesión (Artista, Sala, Horario solicitado) y el enlace directo cifrado con el token UUID para que el administrador pueda auditar y resolver la solicitud en un solo clic.
 
 ![Notificaciones ChatBot](assets/cerebro-chatbot.jpg)
+
 *Notificaciones Whatsapp con ChatBot*
 
 ### 📊 4. Motor de Cuotas Dinámicas por Sello (Business Logic)
