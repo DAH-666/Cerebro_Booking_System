@@ -30,6 +30,9 @@ El sistema elimina por completo la necesidad de servidores dedicados y bases de 
 * **Pasarela CallMeBot:** Integra un cliente HTTP en Google Apps Script que emite una petición HTTPS estructurada hacia el API Gateway de CallMeBot, entregando un mensaje en formato Markdown directamente al dispositivo móvil del Studio Manager.
 * **Enlaces de Acción Inmediata:** El mensaje push de WhatsApp encapsula los metadatos de la sesión (Artista, Sala, Horario solicitado) y el enlace directo cifrado con el token UUID para que el administrador pueda auditar y resolver la solicitud en un solo clic.
 
+![Notificaciones ChatBot](assets/cerebro-chatbot.jpg)
+*Notificaciones Whatsapp con ChatBot*
+
 ### 📊 4. Motor de Cuotas Dinámicas por Sello (Business Logic)
 
 * **Control de Concurrencia Diario:** Lógica de negocio avanzada parametrizada para auditar cuántos estudios distintos tiene reservados de forma concurrente una misma discográfica en un mismo día.
