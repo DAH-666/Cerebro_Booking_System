@@ -39,6 +39,10 @@ El sistema cuenta con un controlador de concurrencia. Evalúa cuántos estudios 
 ### 4. Alertas Asíncronas (WhatsApp & Email)
 Las reservas dentro del horario estándar (L-V, 10h-22h) se procesan automáticamente. Si un proyecto requiere trabajar de madrugada o en fin de semana, el sistema dispara un webhook. A través de la API de CallMeBot, el Studio Manager recibe un mensaje de WhatsApp con los datos de la sesión y un enlace único (UUID) para aprobar o denegar la solicitud desde el móvil.
 
+![Notificaciones ChatBot](assets/cerebro-chatbot.jpg)
+
+*Notificaciones Whatsapp con ChatBot*
+
 ### 5. Interfaz "Teenage Engineering"
 El frontend huye del diseño corporativo clásico. Utiliza una UI brutalista inspirada en el hardware de sintetizadores (botones mecánicos, etiquetas de esquemas eléctricos) optimizada por hardware mediante transformaciones CSS3 para mantener 60 FPS fluidos.
 
